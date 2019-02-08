@@ -4,8 +4,34 @@ import fs from "fs";
 import url from "url";
 import string_decoder from "string_decoder";
 
-import config from "./config";
+import config from "./lib/config";
 
+import data from "./lib/data";
+import handlers from "./lib/handlers";
+import helpers from "./lib/helpers";
+
+
+//@Todo Delete this
+
+//const _data = new data();
+ 
+// _data.create('test3', 'newFile', {'foo':'bar'}, function(err){
+//     console.log("this is error", err);
+// });
+
+
+//_data.create('test3', 'newFile', {'fizz':'buzz'}, function(err){
+ //   console.log("this is error in creating file", err);
+// });
+// _data.update('test3', 'newFile', {'foo':'bar'}, function(err){
+//     console.log("this is error in updating file", err);
+// });
+//_data.read('test3', 'newFile',   function(err, data){
+//     console.log("this was the error in reading file", err, 'this was the data ', data);
+// });
+// _data.delete('test3', 'newFile',   function(err){
+//     console.log("error deleting file", err);
+// });
 
 const httpPort = config.httpPort;
 const httpsPort = config.httpsPort;
@@ -51,7 +77,7 @@ const unifiedServer = (req, res) => {
 
     let decoder = new string_decoder.StringDecoder('utf8');
     
-    console.log(`Method: ${req.method}`);
+    console.log(`Method: ${req.method.toLowerCase()}`);
 
     //Get the querystring
     
@@ -72,14 +98,14 @@ const unifiedServer = (req, res) => {
 
         //Choose the handler else not found handler
         const chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
-
+        const _helpers = new helpers();
         //Construct the data object
         var data = {
             'trimmedPath': trimmedPath,
             'queryStringObject': parsedUrl.query,
-            'method': req.method,
+            'method': req.method.toLowerCase(),
             'headers': req.headers,
-            'payload': buffer
+            'payload': _helpers.parseJsonToObject(buffer)
         };
 
         chosenHandler(data, (statusCode, payload) =>{
@@ -109,31 +135,10 @@ const unifiedServer = (req, res) => {
 }
 
 
-var handlers ={};
 
-handlers.sample = (data, callback) => {
-    //Callback HTTP Status Code and a payload (should be object)
-
-    callback(406, {name: "sample header"});
-
-
-}
-
-handlers.ping = (data, callback) => {
-    //Callback HTTP Status Code and a payload (should be object)
-
-    callback(200);
-
-
-}
-
-handlers.notFound = (data, callback) => {
-
-    callback(404);
-    
-}
 
 var router= {
     "sample": handlers.sample,
-    "ping": handlers.ping
+    "ping": handlers.ping,
+    "users": handlers.users,
 }
