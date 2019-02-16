@@ -100,6 +100,7 @@ const unifiedServer = (req, res) => {
         const chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
         const _helpers = new helpers();
         //Construct the data object
+        console.log("buffer", buffer, _helpers.parseJsonToObject(buffer));
         var data = {
             'trimmedPath': trimmedPath,
             'queryStringObject': parsedUrl.query,
@@ -113,14 +114,17 @@ const unifiedServer = (req, res) => {
             statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
 
             //Use Payload or Default            
+            console.log(payload, typeof(payload));
             payload = typeof(payload) == 'object' ? payload : {};
 
             //Converting Object to String
             const payloadString = JSON.stringify(payload);
 
             //Returning Response
+            res.setHeader('Content-Type', 'application/json');
             res.writeHead(statusCode);
             res.end(payloadString);
+            console.log(trimmedPath,statusCode);
 
             console.log(`Buffer (Request Payload): ${buffer}`);    
             console.log(`path: ${parsedUrl.pathname}`);
@@ -141,4 +145,5 @@ var router= {
     "sample": handlers.sample,
     "ping": handlers.ping,
     "users": handlers.users,
+    "tokens": handlers.tokens,
 }

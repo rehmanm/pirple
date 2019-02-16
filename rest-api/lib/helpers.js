@@ -22,10 +22,33 @@ class helpers{
     parseJsonToObject(str){
 
         try {
-            let obj = JSON.parse(str);
+            let obj = JSON.parse(str); 
             return obj;
         } catch(e){
             return {};
+        }
+    }
+
+    //Create a random alpha numeric string
+    createRandomString(strLength) {
+        strLength = typeof(strLength) == "number" && strLength > 0? strLength : false;
+        if(strLength){
+            let possibleCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
+            let str = "";
+
+            for (let i =0;i<strLength; i++){
+
+                //Get a random Character and append it in the string
+                let randomCharacter = possibleCharacters.charAt(Math.floor(Math.random() * possibleCharacters.length));
+
+                str += randomCharacter;
+
+            }
+
+            return str;
+
+        } else{
+            return strLength;
         }
     }
 

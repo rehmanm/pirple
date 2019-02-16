@@ -2,14 +2,17 @@
 
 import fs from "fs";
 import path  from "path";
+import helpers from "./helpers"
 
 
 // Container First Module
 
 
 class data {
+
     constructor() {
         this.baseDir = path.join(__dirname, "/../.data/");
+        this.helpers = new helpers(); 
     }
     
     getFileName(dir, file) {
@@ -32,14 +35,14 @@ class data {
         let fileName = this.getFileName(dir, file);
  
         fs.open(fileName,  'wx', 
-            function(err, fileDescriptor){
+            (err, fileDescriptor) =>{
                 if(!err && fileDescriptor){
                     //Convert data to String
                     var stringData = JSON.stringify(data);
 
-                    fs.writeFile(fileDescriptor, stringData, function(err){
+                    fs.writeFile(fileDescriptor, stringData, (err) => {
                         if(!err){
-                            fs.close(fileDescriptor, function(err){
+                            fs.close(fileDescriptor, (err) => {
                                 if(!err){
                                     callback(false)
                                 } else{
@@ -58,13 +61,20 @@ class data {
             }
         );    
     };
+ 
+
 
     //Read File Data
     read(dir, file, callback){
 
         let fileName = this.getFileName(dir, file);
-        fs.readFile(fileName, 'utf8', function(err, data){
-            callback(err, data);
+        fs.readFile(fileName, 'utf8', (err, data) =>{
+            if (!err && data){
+                let parsedJSONData = this.helpers.parseJsonToObject(data);  
+                callback(err, parsedJSONData);
+            } else {
+                callback(err, data);
+            }
         });
     }
 
@@ -74,17 +84,17 @@ class data {
         let fileName = this.getFileName(dir, file);
  
         fs.open(fileName,  'r+', 
-            function(err, fileDescriptor){
+            (err, fileDescriptor) => {
                 if(!err && fileDescriptor){
                     //Convert data to String
                     var stringData = JSON.stringify(data);
 
                     //Truncate the file
-                    fs.truncate(fileDescriptor, function(err) {                    
+                    fs.truncate(fileDescriptor, (err) => {                    
                         if(!err) {
-                            fs.writeFile(fileDescriptor, stringData, function(err){
+                            fs.writeFile(fileDescriptor, stringData, (err) =>{
                                 if(!err){
-                                    fs.close(fileDescriptor, function(err){
+                                    fs.close(fileDescriptor, (err) => {
                                         if(!err){
                                             callback(false)
                                         } else{
@@ -111,7 +121,7 @@ class data {
     delete(dir, file, callback){
 
         let fileName = this.getFileName(dir, file);
-        fs.unlink(fileName, function(err){
+        fs.unlink(fileName, (err) => {
             if(!err) 
             {
                 callback(false);
