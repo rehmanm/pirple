@@ -16,11 +16,8 @@ class data {
     }
     
     getFileName(dir, file) {
-        console.log("create directory 1");
         let directory = `${this.baseDir}${dir}`;
-        console.log("directory exists", fs.existsSync(directory));
         if(!fs.existsSync(directory)){
-            console.log("create directory");
              fs.mkdirSync(directory);
         }
 
@@ -79,7 +76,7 @@ class data {
     }
 
     //Update File Data
-    update(dir, file, data, callback){
+    update(dir, file, data, callback) {
 
         let fileName = this.getFileName(dir, file);
  
@@ -96,14 +93,14 @@ class data {
                                 if(!err){
                                     fs.close(fileDescriptor, (err) => {
                                         if(!err){
-                                            callback(false)
+                                            callback(false);
                                         } else{
-                                            callback("Error closing file")
+                                            callback("Error closing file");
                                         }
                                     });    
                                 } else{
 
-                                    callback('Error Writing to existing File')
+                                    callback('Error Writing to existing File');
                                 }
                             });
                         } else{
@@ -112,7 +109,7 @@ class data {
                     });
                 } else {
                     console.log(err);
-                    callback("Couldn't update the file, it may not exist yet")
+                    callback("Couldn't update the file, it may not exist yet");
                 }
             }
         );  
@@ -132,9 +129,6 @@ class data {
 
         });
     }
-
-
-    
 }
 
 

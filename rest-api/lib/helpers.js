@@ -3,6 +3,8 @@
 
 import crypto from "crypto";
 import config from "./config";
+import https from "https";
+import queryString from "querystring";
 
 
 class helpers{
@@ -52,6 +54,57 @@ class helpers{
         }
     }
 
+    sendTwilioSms  (phone, msg, callback) {
+        phone = typeof(phone) == "string" && phone.trim().length == 10? phone : false
+        msg = typeof(msg) == "string" && msg.trim().length> 0 ? msg : false
+        console.log(phone, msg);
+        if (phone && msg){
+            // Configure the request payload
+             let payload = {
+                 "From": config.twilio.fromPhone,
+                 "To": '+1' + phone,
+                 "Body": msg
+             }
+             let stringPayload = queryString.stringify(payload);
+
+             let requestDetails = {
+                'protocol' :'https:',
+                "hostname" : "api.twilio.com",
+                'method' : 'POST',
+                'path':`/2010-04-01/Accounts/${config.twilio.accountSid}/Messages.json`,
+                'auth': `${config.twilio.accountSid}:${config.twilio.authToken}`,
+                'headers' :{
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Lenght': Buffer.byteLength(stringPayload)
+                }
+
+             };
+
+              //Instantiate the request object
+             let req = https.request(requestDetails, (res) => {
+                 let status = res.statusCode;
+
+                 if (status==200 || status == 201){
+                     callback(false);
+
+                 } else {
+                     callback(`Status Code Return was ${status}`);
+                 }
+             });
+
+             req.on("error", (e) =>{
+                 callback(e);
+             });
+
+             req.write(stringPayload);
+             req.end();
+        } else {
+            callback("Given Parameters were missing")
+        }
+        
+    }
 }
+
+
 
 export default helpers;

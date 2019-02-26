@@ -13,6 +13,12 @@ import helpers from "./lib/helpers";
 
 //@Todo Delete this
 
+const _helpers = new helpers();
+
+_helpers.sendTwilioSms("4158375309", "test", (err) =>{
+    console.log("This is error", err);
+});
+
 //const _data = new data();
  
 // _data.create('test3', 'newFile', {'foo':'bar'}, function(err){
@@ -100,7 +106,7 @@ const unifiedServer = (req, res) => {
         const chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
         const _helpers = new helpers();
         //Construct the data object
-        console.log("buffer", buffer, _helpers.parseJsonToObject(buffer));
+        //console.log("buffer", buffer, _helpers.parseJsonToObject(buffer));
         var data = {
             'trimmedPath': trimmedPath,
             'queryStringObject': parsedUrl.query,
@@ -114,7 +120,7 @@ const unifiedServer = (req, res) => {
             statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
 
             //Use Payload or Default            
-            console.log(payload, typeof(payload));
+            //console.log(payload, typeof(payload));
             payload = typeof(payload) == 'object' ? payload : {};
 
             //Converting Object to String
@@ -124,11 +130,11 @@ const unifiedServer = (req, res) => {
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(statusCode);
             res.end(payloadString);
-            console.log(trimmedPath,statusCode);
+            // console.log(trimmedPath,statusCode);
 
-            console.log(`Buffer (Request Payload): ${buffer}`);    
-            console.log(`path: ${parsedUrl.pathname}`);
-            console.log(`Returning Reponse:`, statusCode, payloadString);
+            // console.log(`Buffer (Request Payload): ${buffer}`);    
+            // console.log(`path: ${parsedUrl.pathname}`);
+            // console.log(`Returning Reponse:`, statusCode, payloadString);
 
         });
 
@@ -146,4 +152,5 @@ var router= {
     "ping": handlers.ping,
     "users": handlers.users,
     "tokens": handlers.tokens,
+    "checks": handlers.checks
 }
