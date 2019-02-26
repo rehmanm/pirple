@@ -13,11 +13,11 @@ import helpers from "./lib/helpers";
 
 //@Todo Delete this
 
-const _helpers = new helpers();
+// const _helpers = new helpers();
 
-_helpers.sendTwilioSms("4158375309", "test", (err) =>{
-    console.log("This is error", err);
-});
+// _helpers.sendTwilioSms("4158375309", "test", (err) =>{
+//     console.log("This is error", err);
+// });
 
 //const _data = new data();
  
