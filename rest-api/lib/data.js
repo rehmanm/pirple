@@ -3,6 +3,7 @@
 import fs from "fs";
 import path  from "path";
 import helpers from "./helpers"
+import { timingSafeEqual } from "crypto";
 
 
 // Container First Module
@@ -14,9 +15,15 @@ class data {
         this.baseDir = path.join(__dirname, "/../.data/");
         this.helpers = new helpers(); 
     }
+
+    getDirectory (dir) {
+        let directory = `${this.baseDir}${dir}`; 
+        return directory;
+    };
     
     getFileName(dir, file) {
-        let directory = `${this.baseDir}${dir}`;
+        let directory = this.getDirectory(dir);
+
         if(!fs.existsSync(directory)){
              fs.mkdirSync(directory);
         }
@@ -65,6 +72,7 @@ class data {
     read(dir, file, callback){
 
         let fileName = this.getFileName(dir, file);
+        console.log("fileName", fileName);
         fs.readFile(fileName, 'utf8', (err, data) =>{
             if (!err && data){
                 let parsedJSONData = this.helpers.parseJsonToObject(data);  
@@ -127,6 +135,25 @@ class data {
                 callback(err);
             }
 
+        });
+    }
+
+    //List all the items in a directory
+    list(dir, callback) {
+        let directory = this.getDirectory(dir);
+        fs.readdir(directory, (err, data) =>{
+            if(!err && data && data.length > 0){
+                let trimmedPath = [];
+
+                data.forEach((fileName) =>{
+                    trimmedPath.push(fileName.replace(".json", ''));
+                });
+                callback(false, trimmedPath);
+            } else {
+
+                callback(false);
+
+            }
         });
     }
 }

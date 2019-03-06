@@ -481,7 +481,8 @@ handlers._checks.post = (data, callback)  => {
                                 "protocol": protocol,
                                 "url": url,
                                 "successCodes": successCodes,
-                                "timeoutSeconds": timeoutSeconds
+                                "timeoutSeconds": timeoutSeconds,
+                                "method": method
                             };
 
                             _data.create("checks", checkID, checkObject, (err) =>{
